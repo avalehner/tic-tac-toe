@@ -16,9 +16,9 @@ const determineMovesLeft = (board) => {
 
 const determineWinningCombination = (board) => {
   const winningCombinations = [
-    [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ], //vertical
-    [ 0, 3, 6 ], [ 1, 4, 7 ], [ 2, 5, 8 ], //horizontal
-    [ 0, 4, 8 ], [ 6, 4, 2 ] //diagonal 
+    [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ], //horizontal 
+    [ 0, 3, 6 ], [ 1, 4, 7 ], [ 2, 5, 8 ], //vertical
+    [ 0, 4, 8 ], [ 2, 4, 6 ] //diagonal 
   ] 
  
   return winningCombinations.some(([ a, b, c ]) => {
@@ -28,7 +28,7 @@ const determineWinningCombination = (board) => {
 
 const displayBoard = (board) => {
   const display = board.map((position, index) => {
-    return position === null ? position = index + 1 : position
+    return position === null ? index + 1 : position
   })
 
   console.log(`
@@ -79,9 +79,6 @@ const renderReplayMenu = async (getWinningPlayer, player) => {
 }
 
 const playTicTacToe = async () => {
-  //to do: 
-  //remove unnecessary side effects 
-  
   console.clear()
 
   //welcome message 
@@ -145,10 +142,11 @@ const playTicTacToe = async () => {
       name: 'position', 
       message: `${currentPlayer} your symbol is ${playerSymbol}. Enter a digit 1 through 9 to place your symbol on the board:`, 
       validate: value => {
-        if (value < 1 || value > 9) {
+        const num = Number(value)
+        if (isNaN(num) || num < 1 || num > 9) {
           return `${currentPlayer} Input a number between 1 and 9 (your symbol is ${playerSymbol}): `
         }
-        if (boardArr[value - 1] !== null) {
+        if (boardArr[num - 1] !== null) {
           return `${currentPlayer} you cannot overwrite a previous move, enter another position (you are ${playerSymbol}): `
         }
         return true
@@ -156,11 +154,8 @@ const playTicTacToe = async () => {
     }, { onCancel: quitGame })
 
     //assign player input to board position 
-    let playerInput = playerInputResponse.position
+    let playerInput = Number(playerInputResponse.position)
     boardArr[playerInput - 1] = playerSymbol
-
-    determineWinningCombination(boardArr)
-    determineMovesLeft(boardArr)
 
     //assign winning player and exit while loop 
     if (getWinningPlayer(currentPlayer)) break 
